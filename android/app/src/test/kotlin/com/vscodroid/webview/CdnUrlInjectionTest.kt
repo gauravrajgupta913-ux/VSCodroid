@@ -134,7 +134,7 @@ class CdnUrlInjectionTest {
             intercept(
                 server,
                 // What `%3Fpath%3D...` decodes to by the time this code sees it.
-                "/stable/deadbeef/vscode-remote-resource?path=/data/data/com.vscodroid/" +
+                "/stable/deadbeef/vscode-remote-resource?path=/data/data/com.geditorx.app/" +
                     "files/home/.ssh/id_ed25519",
             )
 
@@ -167,7 +167,7 @@ class CdnUrlInjectionTest {
             val response = intercept(
                 server,
                 "/stable/deadbeef/../../vscode-remote-resource",
-                query = "path=/data/data/com.vscodroid/files/home/.ssh/id_ed25519",
+                query = "path=/data/data/com.geditorx.app/files/home/.ssh/id_ed25519",
             )
 
             assertNull(

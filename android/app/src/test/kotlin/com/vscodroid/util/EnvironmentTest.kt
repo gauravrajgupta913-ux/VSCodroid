@@ -27,8 +27,8 @@ import java.nio.file.Path
 class EnvironmentTest {
 
     private lateinit var context: Context
-    private val mockFilesDir = File("/data/data/com.vscodroid/files")
-    private val mockNativeLibDir = "/data/data/com.vscodroid/nativeLibs"
+    private val mockFilesDir = File("/data/data/com.geditorx.app/files")
+    private val mockNativeLibDir = "/data/data/com.geditorx.app/nativeLibs"
 
     @BeforeEach
     fun setUp() {

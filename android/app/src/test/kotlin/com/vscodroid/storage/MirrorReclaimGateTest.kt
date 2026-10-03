@@ -24,7 +24,7 @@ import java.io.File
  */
 class MirrorReclaimGateTest {
 
-    private val root = "/data/user/0/com.vscodroid/files/saf-mirrors"
+    private val root = "/data/user/0/com.geditorx.app/files/saf-mirrors"
     private val sep = File.separator
 
     @Test

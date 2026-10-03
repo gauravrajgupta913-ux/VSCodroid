@@ -1278,7 +1278,7 @@ class NodeService : Service() {
      * by both `ps` and `pidof`, tapping the action from the shade created the
      * process for the service and ran the stop:
      *
-     *     ActivityManager: Start proc 7532:com.vscodroid.debug for service .../NodeService
+    *     ActivityManager: Start proc 7532:com.geditorx.app.debug for service .../NodeService
      *     NodeService: Service created
      *     NodeService: Stop requested from the notification
      *

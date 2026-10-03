@@ -44,11 +44,11 @@ function writeProc(root, pid, argv, { uid = UID, ppid = 1 } = {}) {
     );
 }
 
-const NODE = '/data/data/com.vscodroid/lib/arm64/libnode.so';
+const NODE = '/data/data/com.geditorx.app/lib/arm64/libnode.so';
 // The interpreter FirstRunSetup writes into settings.json as
 // python.defaultInterpreterPath, which is what ms-python launches its server
 // with. Not every language server is a Node one, and the two rules differ there.
-const PY = '/data/user/0/com.vscodroid/files/usr/bin/python3';
+const PY = '/data/user/0/com.geditorx.app/files/usr/bin/python3';
 // Taken from the monitor, not written out here. The chat-backend rule is
 // anchored to this directory, and the monitor derives it from where it sits, so
 // a fixture spelling the device's path itself would answer for a monitor whose
@@ -61,16 +61,16 @@ const REH = monitor.REH_ROOT;
 const SRV = path.dirname(REH);
 // Marketplace and bundled-by-us extensions are extracted here, which is a
 // different tree from the editor's own extensions under REH.
-const EXT = '/data/user/0/com.vscodroid/files/home/.vscodroid/extensions';
+const EXT = '/data/user/0/com.geditorx.app/files/home/.vscodroid/extensions';
 // The ceiling ProcessManager derives from device RAM and puts on the command
 // line. It is on the real processes and it belongs on the fixtures, because it
 // is the argument that used to be the only thing the details view printed.
 const HEAP = '--max-old-space-size=488';
-const DATA = '/data/user/0/com.vscodroid/files/home/.vscodroid/data';
+const DATA = '/data/user/0/com.geditorx.app/files/home/.vscodroid/data';
 // The local copy of one folder opened through the SAF picker, named by the hash
 // Environment.getSafMirrorDir builds. It is where the editor is pointed, so
 // every path under it is a workspace path the user chose.
-const MIRROR = '/data/user/0/com.vscodroid/files/saf-mirrors/a1b2c3';
+const MIRROR = '/data/user/0/com.geditorx.app/files/saf-mirrors/a1b2c3';
 
 // The status bar extension, loaded for its label table alone.
 //
@@ -254,7 +254,7 @@ function checkRehAnchorFollowsTheTree(baseTmp) {
     const tail = 'node_modules/@github/copilot-android-arm64/index.js';
     writeProc(proc, 2001, [NODE, `${relocated.REH_ROOT}/${tail}`, '--stdio']);
     // The tree this rule used to name, now holding nothing this app unpacked.
-    writeProc(proc, 2002, [NODE, `/data/user/0/com.vscodroid/files/server/vscode-reh/${tail}`, '--stdio']);
+    writeProc(proc, 2002, [NODE, `/data/user/0/com.geditorx.app/files/server/vscode-reh/${tail}`, '--stdio']);
 
     const out = path.join(moved, 'tmp');
     fs.mkdirSync(out);
@@ -340,7 +340,7 @@ function checkSnapshotIsReplacedWhole(baseTmp) {
     const out = fs.mkdtempSync(path.join(baseTmp, 'atomic-'));
     const proc = path.join(out, 'proc');
     writeProc(proc, 3001, [NODE, `${REH}/out/server-main.js`, '--host', '127.0.0.1']);
-    writeProc(proc, 3002, ['/data/data/com.vscodroid/lib/arm64/libbash.so', '-l']);
+    writeProc(proc, 3002, ['/data/data/com.geditorx.app/lib/arm64/libbash.so', '-l']);
     process.env.TMPDIR = out;
     const snapshotPath = path.join(out, 'vscodroid-processes.json');
 
@@ -418,7 +418,7 @@ function main() {
 function run(tmp, proc, signals) {
     // The monitor runs inside this very process, so its own pid has to be one
     // of the fixture entries for the count to mean anything.
-    writeProc(proc, process.pid, [NODE, '--max-old-space-size=512', '/data/user/0/com.vscodroid/files/server/server.js', '--host=127.0.0.1']);
+    writeProc(proc, process.pid, [NODE, '--max-old-space-size=512', '/data/user/0/com.geditorx.app/files/server/server.js', '--host=127.0.0.1']);
 
     const cases = [
         // pid, argv, the type the snapshot must carry
@@ -434,9 +434,9 @@ function run(tmp, proc, signals) {
             `${REH}/out/server-main.js`, '--host', '127.0.0.1'], 'server'],
         [1002, [NODE, `${REH}/extensions/css-language-features/server/dist/node/cssServerMain.js`, '--node-ipc'], 'langserver'],
         [1003, [NODE, `${REH}/extensions/json-language-features/server/dist/node/jsonServerMain.js`, '--node-ipc'], 'langserver'],
-        [1004, ['/data/data/com.vscodroid/lib/arm64/libbash.so', '-l'], 'terminal'],
-        [1005, [NODE, '/data/user/0/com.vscodroid/files/home/projects/my-eslint-tool/index.js'], 'unknown'],
-        [1006, [NODE, '/data/user/0/com.vscodroid/files/usr/share/reporter/index.js'], 'unknown'],
+        [1004, ['/data/data/com.geditorx.app/lib/arm64/libbash.so', '-l'], 'terminal'],
+        [1005, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/my-eslint-tool/index.js'], 'unknown'],
+        [1006, [NODE, '/data/user/0/com.geditorx.app/files/usr/share/reporter/index.js'], 'unknown'],
         [1007, [NODE, HEAP, `${REH}/out/bootstrap-fork`, '--type=fileWatcher'], 'fileWatcher'],
         // A folder opened from device storage is copied under saf-mirrors, so
         // everything below that path is the user's workspace. It used to be a
@@ -470,16 +470,16 @@ function run(tmp, proc, signals) {
         // The other half of that pattern: a bare 'tailwind' would match all three of
         // these, and 'langserver' is what the details view tells the user, beside
         // advice that names an extension to disable. These are the user's own work.
-        [1011, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/tailwind.config.js'],
+        [1011, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/tailwind.config.js'],
             'unknown'],
-        [1012, [NODE, '/data/user/0/com.vscodroid/files/home/projects/build-tailwind.js'],
+        [1012, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/build-tailwind.js'],
             'unknown'],
         // The same specificity question for the patterns that are single words.
         // These four are one rule read in both directions, and either half alone
         // passes on the wrong one: a rule that only has to classify gopls is
         // satisfied by matching every basename containing it, and a rule that
         // only has to spare run-eslint.js is satisfied by matching nothing.
-        [1013, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/run-eslint.js'],
+        [1013, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/run-eslint.js'],
             'unknown'],
         // The ESLint command-line tool, which is how ESLint is run from a
         // terminal or a task here: SELinux refuses to execve the .bin shim under
@@ -489,16 +489,16 @@ function run(tmp, proc, signals) {
         // a language server, reported idle once it sat still. The server that
         // pattern looked like it covered has always had its own entry,
         // eslintServer, exercised at 1017.
-        [1036, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/node_modules/eslint/bin/eslint.js',
+        [1036, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/node_modules/eslint/bin/eslint.js',
             '.'], 'unknown'],
         // The pattern reaches this one through a flag's value, not through the
         // script being run: every argument is tested, and the basename of
         // --out=/tmp/tsserver-log.js is tsserver-log.js.
-        [1014, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/build.js',
+        [1014, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/build.js',
             '--out=/tmp/tsserver-log.js'], 'unknown'],
         // A server whose program name is the pattern with nothing around it, and
         // one that is the pattern plus the extension its entry point carries.
-        [1015, ['/data/user/0/com.vscodroid/files/usr/bin/gopls', '-mode=stdio'], 'langserver'],
+        [1015, ['/data/user/0/com.geditorx.app/files/usr/bin/gopls', '-mode=stdio'], 'langserver'],
         [1016, [NODE, `${REH}/extensions/node_modules/typescript/lib/tsserver.js`,
             '--useInferredProjectPerProjectRoot'], 'langserver'],
         // The three servers whose program name carries a bare pattern on the
@@ -518,15 +518,15 @@ function run(tmp, proc, signals) {
             'langserver'],
         // Not bundled, and the reason the entry for it carries hyphens: pyright
         // arrives with an extension the user installs.
-        [1019, [NODE, '/data/user/0/com.vscodroid/files/home/projects/node_modules/pyright/dist/pyright-langserver.js',
+        [1019, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/node_modules/pyright/dist/pyright-langserver.js',
             '--stdio'], 'langserver'],
         // The other direction for two of those entries, so that neither is
         // satisfied by a rule that matches everything: a user's own script whose
         // name merely contains the server's, one of them under the very
         // interpreter that runs the real one.
-        [1020, [PY, '/data/user/0/com.vscodroid/files/home/projects/tools/jedi-scraper.py'],
+        [1020, [PY, '/data/user/0/com.geditorx.app/files/home/projects/tools/jedi-scraper.py'],
             'unknown'],
-        [1021, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/eslintServer.config.js'],
+        [1021, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/eslintServer.config.js'],
             'unknown'],
         // The editor's own servers as they actually launch, which is the spelling
         // that was missing. Every one of these clients passes an extensionless
@@ -550,14 +550,14 @@ function run(tmp, proc, signals) {
         // And the other direction, so none of the four is satisfied by a rule
         // that matches too much. A bare word has to be the whole basename, so a
         // user's own file merely starting with one of these names stays theirs.
-        [1026, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/cssServerMain.helper.js'],
+        [1026, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/cssServerMain.helper.js'],
             'unknown'],
-        [1027, [NODE, '/data/user/0/com.vscodroid/files/home/projects/serverWorkerMain-shim.js'],
+        [1027, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/serverWorkerMain-shim.js'],
             'unknown'],
         // 'vscode-eslint' used to be a pattern, and a hyphen put it on the
         // substring arm where the only names it could still reach were the
         // user's. It is gone, and this is what its absence has to keep true.
-        [1028, [NODE, '/data/user/0/com.vscodroid/files/home/projects/vscode-eslint-shim.js'],
+        [1028, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/vscode-eslint-shim.js'],
             'unknown'],
         // The two processes a signed-out, untouched editor left running on this
         // device beyond its own core before 1.139.1, measured on an API 33 and an
@@ -573,7 +573,7 @@ function run(tmp, proc, signals) {
         // scope segments precisely so a name merely containing 'copilot' stays
         // the user's, and being classified 'langserver' is what the details view
         // tells the user about a process.
-        [1031, [NODE, '/data/user/0/com.vscodroid/files/home/projects/copilot-demo/index.js'],
+        [1031, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/copilot-demo/index.js'],
             'unknown'],
         // The needle's own negative control, and the reason it is not a bare
         // package name: @github/copilot lists eight @github/copilot-<platform>
@@ -581,7 +581,7 @@ function run(tmp, proc, signals) {
         // running the Copilot CLI's own install inside a project. It is theirs,
         // and 'langserver' would report it as an idle language server five
         // minutes later.
-        [1032, [NODE, '/data/user/0/com.vscodroid/files/home/projects/site/node_modules/@github/copilot-linux-arm64/index.js',
+        [1032, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/site/node_modules/@github/copilot-linux-arm64/index.js',
             '--headless'], 'unknown'],
         // The other alias site, which the agent host does not use but the
         // session provider can: same tree, deeper path.
@@ -594,9 +594,9 @@ function run(tmp, proc, signals) {
         // LANG_SERVER_PATTERNS: a language server run from inside either path was
         // outside lsCpuTracker, and so never marked idle, while it went on
         // holding one of the 32 phantom slots.
-        [1037, [NODE, '/data/user/0/com.vscodroid/files/home/projects/server-main.js-notes/index.js'],
+        [1037, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/server-main.js-notes/index.js'],
             'unknown'],
-        [1038, [NODE, '/data/user/0/com.vscodroid/files/home/projects/bootstrap-forklift/build.js'],
+        [1038, [NODE, '/data/user/0/com.geditorx.app/files/home/projects/bootstrap-forklift/build.js'],
             'unknown'],
     ];
     for (const [pid, argv] of cases) {
@@ -604,7 +604,7 @@ function run(tmp, proc, signals) {
     }
 
     // The main Android process is not a phantom and must not reach the tree.
-    writeProc(proc, 1100, ['com.vscodroid.debug']);
+    writeProc(proc, 1100, ['com.geditorx.app.debug']);
     // Another app's process, same device, different uid.
     writeProc(proc, 1200, [NODE, `${REH}/out/server-main.js`], { uid: UID + 1 });
 

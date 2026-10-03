@@ -356,9 +356,9 @@ function classify(cmdline) {
 
     // Main Android app process: not a phantom, managed by Activity Manager.
     // Its cmdline is just the package name. Other processes also have the package
-    // name in their binary PATH (e.g. /data/app/.../com.vscodroid.debug-.../lib/...)
+    // name in their binary PATH (e.g. /data/app/.../com.geditorx.app.debug-.../lib/...)
     // so we must check for exact match, not substring.
-    if (/^com\.vscodroid(\.\w+)?$/.test(cmd)) return 'app';
+    if (/^com\.geditorx\.app(\.\w+)?$/.test(cmd)) return 'app';
 
     // What a process IS gets decided on the basename of each argument; where it
     // happens to live does not. Testing the whole command line made every

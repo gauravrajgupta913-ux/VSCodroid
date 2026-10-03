@@ -26,7 +26,7 @@ import java.io.File
 class MirrorLookupTest {
 
     private val sep = File.separator
-    private val root = "/data/user/0/com.vscodroid/files/saf-mirrors"
+    private val root = "/data/user/0/com.geditorx.app/files/saf-mirrors"
 
     private fun folder(hash: String) = SafFolderInfo(
         uri = mockk<Uri>(relaxed = true),
@@ -59,7 +59,7 @@ class MirrorLookupTest {
     @Test
     fun `an ordinary project folder is not a mirror`() {
         assertNull(
-            SafStorageManager.folderForOpenedPath(all, "/data/user/0/com.vscodroid/files/home/projects"),
+            SafStorageManager.folderForOpenedPath(all, "/data/user/0/com.geditorx.app/files/home/projects"),
         )
     }
 

@@ -252,7 +252,7 @@ for _form in FORMS:
 # The rewriter knows one spelling and pads it in place, so it can only fix the
 # Termux one. The detector has no such excuse, and had the same narrowness: the
 # failure that motivated this whole file was reported as
-# `/data/data/com.vscodroid/files/usr/bin/sh`, the app's OWN prefix, which the
+    # `/data/data/com.geditorx.app/files/usr/bin/sh`, the app's OWN prefix, which the
 # Termux literal does not match. SELinux refuses `execve` on anything under
 # `app_data_file` whoever owns it, so every such path is unrunnable and the
 # check should say so rather than only recognising the one it can repair.

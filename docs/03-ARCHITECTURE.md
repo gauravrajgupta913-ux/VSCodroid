@@ -480,7 +480,7 @@ reinstall moves `nativeLibraryDir` and dangles it.
 
 ```mermaid
 flowchart TD
-  A["/data/data/com.vscodroid/"] --> B["files/"]
+  A["/data/data/com.geditorx.app/"] --> B["files/"]
   B --> B1["home/ ($HOME)"]
   B1 --> B1a[".vscodroid/ (VS Code data folder)"]
   B1a --> B1a1["extensions/ (installed extensions)"]

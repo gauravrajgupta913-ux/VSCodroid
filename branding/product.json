@@ -58,8 +58,8 @@
     "nodejsArtifactFeed"
   ],
   "set": {
-    "nameShort": "VSCodroid",
-    "nameLong": "VSCodroid",
+    "nameShort": "G-EditorX",
+    "nameLong": "G-EditorX",
     "applicationName": "vscodroid",
     "dataFolderName": ".vscodroid",
     "serverApplicationName": "vscodroid-server",

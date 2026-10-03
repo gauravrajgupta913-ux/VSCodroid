@@ -59,8 +59,8 @@ echo "  ✓ Installed"
 echo ""
 echo "Launching VSCodroid..."
 # The debug build type sets applicationIdSuffix = ".debug", so the package this
-# script just installed is com.vscodroid.debug. Launching com.vscodroid resolved
-# nothing ("Activity class {com.vscodroid/com.vscodroid.SplashActivity} does not
+# script just installed is com.geditorx.app.debug. Launching com.geditorx.app resolved
+# nothing ("Activity class {com.geditorx.app/com.vscodroid.SplashActivity} does not
 # exist") unless a release build happened to be installed beside it, in which
 # case it started that one instead and the install above was wasted.
 #
@@ -69,7 +69,7 @@ echo "Launching VSCodroid..."
 # runs on every launch, so after the reinstall above the session would run on
 # dangling usr/bin symlinks and settings paths naming the old native library
 # directory.
-PKG="${PKG:-com.vscodroid.debug}"
+PKG="${PKG:-com.geditorx.app.debug}"
 adb shell am start -n "$PKG/com.vscodroid.SplashActivity"
 echo "  ✓ Launched $PKG"
 

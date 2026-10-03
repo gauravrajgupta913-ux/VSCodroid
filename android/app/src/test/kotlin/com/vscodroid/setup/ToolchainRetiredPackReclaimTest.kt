@@ -80,7 +80,7 @@ class ToolchainRetiredPackReclaimTest {
         every { context.filesDir } returns filesDir
         every { context.cacheDir } returns File(filesDir, "cache")
         every { context.packageManager } returns packageManager
-        every { context.packageName } returns "com.vscodroid"
+        every { context.packageName } returns "com.geditorx.app"
 
         File(filesDir, "home/.vscodroid").mkdirs()
     }

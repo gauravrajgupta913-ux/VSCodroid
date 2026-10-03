@@ -66,7 +66,7 @@ class OpensslConfigTest {
             nativeLibraryDir = "/data/app/x/lib/arm64"
             dataDir = filesDir.parent
         }
-        every { context.packageName } returns "com.vscodroid"
+        every { context.packageName } returns "com.geditorx.app"
     }
 
     @AfterEach

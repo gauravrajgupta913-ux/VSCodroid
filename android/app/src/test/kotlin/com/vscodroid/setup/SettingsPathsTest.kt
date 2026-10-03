@@ -26,13 +26,13 @@ import org.junit.jupiter.api.Test
 class SettingsPathsTest {
 
     /** Where the profile now points: a symlink setupToolSymlinks() keeps current. */
-    private val shell = "/data/user/0/com.vscodroid/files/usr/bin/bash"
+    private val shell = "/data/user/0/com.geditorx.app/files/usr/bin/bash"
     private val git = "/data/app/~~new==/com.vscodroid-new==/lib/arm64/libgit.so"
 
     private val oldDir = "/data/app/~~old==/com.vscodroid-old==/lib/arm64"
 
     /** What the Claude Code extension is launched with; a filesDir symlink. */
-    private val wrapper = "/data/user/0/com.vscodroid/files/usr/bin/node"
+    private val wrapper = "/data/user/0/com.geditorx.app/files/usr/bin/node"
 
     private fun settings(
         bashPath: String,
@@ -632,7 +632,7 @@ class SettingsPathsTest {
         fun `leaves a wrapper the user pointed somewhere of their own`() {
             // The sibling paths document this rule and honour it; this one did
             // not, and rewrote whatever it found at every launch.
-            val chosen = "/data/user/0/com.vscodroid/files/home/my-claude-wrapper.sh"
+            val chosen = "/data/user/0/com.geditorx.app/files/home/my-claude-wrapper.sh"
             val before = settings(shell, git, args = "[]", claudeWrapper = chosen)
             val result = refreshManagedPaths(before, shell, git, wrapper)
 
@@ -646,7 +646,7 @@ class SettingsPathsTest {
         fun `does not add a second wrapper beside the user's own`() {
             // The trap in anchoring: once a user value stops matching, treating
             // "did not match" as "not present" writes the key twice.
-            val chosen = "/data/user/0/com.vscodroid/files/home/my-claude-wrapper.sh"
+            val chosen = "/data/user/0/com.geditorx.app/files/home/my-claude-wrapper.sh"
             val before = settings(shell, git, args = "[]", claudeWrapper = chosen)
             val result = refreshManagedPaths(before, shell, git, wrapper) ?: before
 
@@ -680,7 +680,7 @@ class SettingsPathsTest {
         @Test
         fun `re-points a wrapper the user has stale`() {
             val stale = settings(shell, git, args = "[]",
-                claudeWrapper = "/data/user/0/com.vscodroid/files/usr/bin/node-old")
+                claudeWrapper = "/data/user/0/com.geditorx.app/files/usr/bin/node-old")
             val result = requireNotNull(refreshManagedPaths(stale, shell, git, wrapper))
 
             assertTrue(result.contains(""""claudeCode.claudeProcessWrapper": "$wrapper""""))

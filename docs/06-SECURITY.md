@@ -100,7 +100,7 @@ without the credential minted for that boot, which rides in the proxy URL.
 | Control                              | Implementation                                                                                                                                                                                                                     |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Android App Sandbox                  | Standard Android process isolation                                                                                                                                                                                                 |
-| App-private storage                  | Files in /data/data/com.vscodroid/, inaccessible to other apps. The projects tree is the one thing not there, see 5.2                                                                                                              |
+| App-private storage                  | Files in /data/data/com.geditorx.app/, inaccessible to other apps. The projects tree is the one thing not there, see 5.2                                                                                                              |
 | WebView process isolation            | WebView renderer runs in separate process                                                                                                                                                                                          |
 | AndroidBridge access control         | Every bridge method requires the per-session token and refuses without it; a reflection test fails the build if one is added that does not. There is no origin check -- `@JavascriptInterface` does not carry the caller's origin |
 | Code signing                         | APK/AAB signed with release key                                                                                                                                                                                                    |
@@ -145,7 +145,7 @@ Releases. Only the first is covered by Play's signing.
 | Code signing        | Asset packs signed with same key as base APK (Play Store enforced)             |
 | HTTPS delivery      | For non-Play installs, each ZIP is checked against the sha256 the release publishes in `toolchains.sha256` beside it, before anything is extracted. A ZIP the manifest does not name is refused rather than installed unverified |
 | User-initiated only | Toolchains only downloaded when user selects them in Language Picker           |
-| App-private storage | Toolchains extracted to /data/data/com.vscodroid/, inaccessible to other apps  |
+| App-private storage | Toolchains extracted to /data/data/com.geditorx.app/, inaccessible to other apps  |
 | Sideload integrity  | GitHub Releases APKs include SHA256 checksums for verification                 |
 
 ### 3.6 Backup Security
@@ -306,7 +306,7 @@ Two locations, and the difference matters to a user rather than only to a reader
 
 | Tree                                                                | Where                                                                        |
 | ------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Settings, secrets, the server tree, bundled runtimes, installed toolchains, and the mirrors of folders opened through SAF | App-private internal storage, `/data/data/com.vscodroid/`. No other app can read it |
+| Settings, secrets, the server tree, bundled runtimes, installed toolchains, and the mirrors of folders opened through SAF | App-private internal storage, `/data/data/com.geditorx.app/`. No other app can read it |
 | The default workspace, `projects/`                                  | Internal storage, `filesDir/projects`, on a new install. An install that already has `getExternalFilesDir(null)/projects` keeps it (`Environment.getProjectsDir`): shared storage cannot hold a symbolic link, which is what broke `npm install` there, but moving an existing install's files behind the user's back is not a fix |
 
 Android 11 closed `Android/data` to other apps and to the system Files app, and `minSdk` here is 33,

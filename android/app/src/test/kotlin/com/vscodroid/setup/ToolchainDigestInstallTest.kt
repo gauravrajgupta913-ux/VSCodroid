@@ -335,7 +335,7 @@ class ToolchainDigestInstallTest {
         every { context.filesDir } returns filesDir
         every { context.cacheDir } returns File(filesDir, "cache")
         every { context.packageManager } returns packageManager
-        every { context.packageName } returns "com.vscodroid"
+        every { context.packageName } returns "com.geditorx.app"
 
         val source = mockk<InstallSourceInfo>()
         every { source.installingPackageName } returns "com.example.sideloader"

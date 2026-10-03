@@ -367,8 +367,8 @@ async function main() {
         folder('/storage/1A2B-3C4D/Android/data/com.vscodroid/files/card'),
         folder('/storage/self/primary/Android/data/com.vscodroid/files/self'),
         folder('/storage/emulated/0/android/data/com.vscodroid/files/lower'),
-        folder('/data/user/0/com.vscodroid/files/saf-mirrors/8e440ff38c8e'),
-        folder('/data/user/0/com.vscodroid/files/home/projects/site'),
+        folder('/data/user/0/com.geditorx.app/files/saf-mirrors/8e440ff38c8e'),
+        folder('/data/user/0/com.geditorx.app/files/home/projects/site'),
         folder('/storagebox/drafts'),
         folder('/storage/emulated/0/Documents/silenced'),
     ];

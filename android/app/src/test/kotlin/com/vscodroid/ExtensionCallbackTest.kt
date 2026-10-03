@@ -1065,7 +1065,7 @@ class WorkbenchUrlTest {
 
     @Test
     fun `the token the workbench needs is the token the redactor hides`() {
-        val url = workbenchUrl(13337, "/data/data/com.vscodroid/files/home/projects", token)
+        val url = workbenchUrl(13337, "/data/data/com.geditorx.app/files/home/projects", token)
 
         assertTrue(
             url.contains(token),

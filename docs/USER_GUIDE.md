@@ -1207,7 +1207,7 @@ editor still works, and on a white screen it does not:
 projects: internal storage is not exposed over USB or MTP, and `adb pull` cannot
 read it from a release build. What is left:
 
-- A debug build is readable with `adb shell run-as com.vscodroid.debug`, and its
+- A debug build is readable with `adb shell run-as com.geditorx.app.debug`, and its
   projects can be copied out from there. The release builds refuse `run-as`.
 - An install that still keeps its projects on shared storage can be read as
   before, with USB debugging on:

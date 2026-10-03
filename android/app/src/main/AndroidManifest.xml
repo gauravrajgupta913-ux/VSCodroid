@@ -42,7 +42,7 @@
 
          The reading to take, with the package the build actually installs
          (debug adds a .debug suffix):
-           adb shell dumpsys meminfo com.vscodroid -d | grep -A4 'App Summary'
+           adb shell dumpsys meminfo com.geditorx.app -d | grep -A4 'App Summary'
          The renderer is a separate process and is not the subject here. -->
     <application
         android:name=".VSCodroidApp"

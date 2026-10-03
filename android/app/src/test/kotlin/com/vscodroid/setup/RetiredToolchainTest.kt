@@ -56,7 +56,7 @@ class RetiredToolchainTest {
         context = mockk(relaxed = true)
         every { context.filesDir } returns filesDir
         every { context.cacheDir } returns File(filesDir, "cache")
-        every { context.packageName } returns "com.vscodroid"
+        every { context.packageName } returns "com.geditorx.app"
         File(filesDir, "home/.vscodroid").mkdirs()
     }
 

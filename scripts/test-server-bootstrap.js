@@ -121,7 +121,7 @@ const UPSTREAM = JSON.stringify({ nameShort: 'Code - OSS', version: '1.133.0', q
     assert.strictEqual(run.status, 0, `a valid product.json should boot cleanly:\n${run.output}`);
 
     const product = JSON.parse(fs.readFileSync(path.join(dir, 'vscode-reh', 'product.json'), 'utf8'));
-    assert.strictEqual(product.nameShort, 'VSCodroid', 'the overrides were not applied');
+    assert.strictEqual(product.nameShort, 'G-EditorX', 'the overrides were not applied');
     assert.strictEqual(product.version, '1.133.0', 'an upstream key was lost');
     assert.strictEqual(
         product.extensionsGallery.serviceUrl,
@@ -643,11 +643,11 @@ async function stoppingTakesTheEditorServerWithIt() {
         return { ...result, output: `${result.stdout || ''}${result.stderr || ''}` };
     };
 
-    const once = bootAs('com.vscodroid.debug');
+    const once = bootAs('com.geditorx.app.debug');
     assert.strictEqual(once.status, 0, `a start with a callback page should boot cleanly:\n${once.output}`);
     const first = fs.readFileSync(pagePath, 'utf8');
     assert.ok(
-        first.includes("#Intent;scheme=vscodroid;package=com.vscodroid.debug;end'"),
+        first.includes("#Intent;scheme=vscodroid;package=com.geditorx.app.debug;end'"),
         `the callback intent is not pinned to the package, so any app declaring the scheme is offered the sign-in:\n${first}`,
     );
     // The per-run secret this page used to carry is gone: /callback is answered
@@ -657,7 +657,7 @@ async function stoppingTakesTheEditorServerWithIt() {
     // but the package.
     assert.ok(!/nonce/i.test(first), `the callback page carries a secret again:\n${first}`);
 
-    const twice = bootAs('com.vscodroid.debug');
+    const twice = bootAs('com.geditorx.app.debug');
     assert.strictEqual(twice.status, 0, `a second start should boot cleanly:\n${twice.output}`);
     const second = fs.readFileSync(pagePath, 'utf8');
     assert.strictEqual((second.match(/package=/g) || []).length, 1, `a second start stacked the package:\n${second}`);

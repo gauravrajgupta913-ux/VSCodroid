@@ -18,7 +18,7 @@ import java.io.File
  */
 class EnvironmentSafTest {
 
-    private fun mockContext(filesDir: String = "/data/data/com.vscodroid/files"): Context {
+    private fun mockContext(filesDir: String = "/data/data/com.geditorx.app/files"): Context {
         val context = mockk<Context>()
         every { context.filesDir } returns File(filesDir)
         return context
@@ -36,7 +36,7 @@ class EnvironmentSafTest {
     fun `getSafMirrorsDir returns correct base path`() {
         val context = mockContext()
         val result = Environment.getSafMirrorsDir(context)
-        assertEquals("/data/data/com.vscodroid/files/saf-mirrors", result)
+        assertEquals("/data/data/com.geditorx.app/files/saf-mirrors", result)
     }
 
     @Test
@@ -91,7 +91,7 @@ class EnvironmentSafTest {
         val result = Environment.getSafMirrorDir(context, uri)
 
         assertTrue(
-            result.startsWith("/data/data/com.vscodroid/files/saf-mirrors/"),
+            result.startsWith("/data/data/com.geditorx.app/files/saf-mirrors/"),
             "Mirror dir should be under saf-mirrors/"
         )
     }

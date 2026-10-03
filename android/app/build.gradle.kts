@@ -125,7 +125,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.vscodroid"
+        applicationId = "com.geditorx.app"
         minSdk = 33
         // Held at 36 on purpose, and lint's OldTargetApi is answered rather than
         // ignored. Targeting 37 blocks local network access by default, so a dev

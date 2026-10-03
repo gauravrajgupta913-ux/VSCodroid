@@ -245,7 +245,7 @@ android {
     compileSdk = 37             // compile-time only; what the platform applies is targetSdk
 
     defaultConfig {
-        applicationId = "com.vscodroid"
+        applicationId = "com.geditorx.app"
         minSdk = 33
         targetSdk = 36
         versionCode = 15            // moves every release; read build.gradle.kts, never this block

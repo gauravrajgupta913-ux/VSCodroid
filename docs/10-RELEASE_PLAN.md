@@ -265,7 +265,7 @@ what is translated and what is not, because a listing is read before the guide i
 |--------|-----------|
 | Binary execution | On a Play install, every binary is delivered by Play. Core tools (Node.js, Python, Git plus its `git-remote-curl` helper, bash, tmux, make, ripgrep, ssh, ssh-keygen and the musl loader) ship as `.so` in the base APK's `jniLibs`. The optional toolchains (**Ruby and Java 17, those two and no others**) are never in the APK and arrive as on-demand asset packs, selected by the user and fetched by Play. Note that the app has a second delivery path outside Play's scope: an install whose installing package is neither `com.android.vending` nor Play's legacy `com.google.android.feedback` (sideload, debug build, `adb install`, and any installer that records no name at all) downloads the same toolchains as ZIPs over HTTPS from this project's GitHub Releases. Pre-compiled development tools for developer use. |
 | Foreground Service (specialUse) | Local development server powering the code editor. Must run persistently to serve the IDE UI and handle file operations. |
-| Permissions | Six on the listing, four of them ours. `android/app/src/main/AndroidManifest.xml` declares INTERNET (the editor page's loopback link to the local server, extension marketplace, toolchain downloads), FOREGROUND_SERVICE + FOREGROUND_SERVICE_SPECIAL_USE (dev server) and POST_NOTIFICATIONS (service notification). The manifest merger then adds two the source file never names, and the Play listing shows that merged set: FOREGROUND_SERVICE_DATA_SYNC, from Play's asset delivery library, and `com.vscodroid.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`, which AndroidX defines for the app itself at signature protection level. **No WAKE_LOCK and no MANAGE_EXTERNAL_STORAGE**: this row claimed both as "optional" and neither was ever declared; MANAGE_EXTERNAL_STORAGE would pull in a Play declaration process the app has no need of. External folders are reached through SAF, which is a user grant per folder and not a permission. No camera/mic/location/contacts. Check the merged manifest a release build writes under `app/build/intermediates/merged_manifest/release/`, not this row and not the source file; `scripts/check-permission-claims.py` reads both halves and holds `docs/PRIVACY_POLICY.md` to what it finds. |
+| Permissions | Six on the listing, four of them ours. `android/app/src/main/AndroidManifest.xml` declares INTERNET (the editor page's loopback link to the local server, extension marketplace, toolchain downloads), FOREGROUND_SERVICE + FOREGROUND_SERVICE_SPECIAL_USE (dev server) and POST_NOTIFICATIONS (service notification). The manifest merger then adds two the source file never names, and the Play listing shows that merged set: FOREGROUND_SERVICE_DATA_SYNC, from Play's asset delivery library, and `com.geditorx.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`, which AndroidX defines for the app itself at signature protection level. **No WAKE_LOCK and no MANAGE_EXTERNAL_STORAGE**: this row claimed both as "optional" and neither was ever declared; MANAGE_EXTERNAL_STORAGE would pull in a Play declaration process the app has no need of. External folders are reached through SAF, which is a user grant per folder and not a permission. No camera/mic/location/contacts. Check the merged manifest a release build writes under `app/build/intermediates/merged_manifest/release/`, not this row and not the source file; `scripts/check-permission-claims.py` reads both halves and holds `docs/PRIVACY_POLICY.md` to what it finds. |
 | Privacy | No telemetry collected and nothing sent to any server of ours. One bundled feature does send user content to a third party and must be declared: GitHub Copilot Chat, which has no account and no chat until the user signs in to GitHub, after which the prompt and the code it attaches as context go to GitHub. It still loads and runs from every start, signed in or not. Everything else stays on device. See §5.4 and https://rmyndharis.github.io/VSCodroid/privacy-policy.html |
 | Content rating | No user-generated content, no social features, no violence, no mature content. |
 
@@ -436,7 +436,7 @@ with no section naming the version a user installed.
       open a device folder. Then `adb install -r` the new APK and launch it from
       the launcher. Setup runs again, VSCodroid: About names X.Y.Z, the folder
       reopens, `ruby --version` prints in a new terminal, and SF-2 passes
-   b. Fresh: `adb uninstall com.vscodroid`, install the new APK and finish
+  b. Fresh: `adb uninstall com.geditorx.app`, install the new APK and finish
       setup; the toolchain picker comes first, then the notification dialog.
       Run TC-2, SF-1, SF-2 and SF-16, and ED-6 pasting into a terminal with
       "Terminal: Paste into Active Terminal". VSCodroid: About > Licenses shows
@@ -445,9 +445,9 @@ with no section naming the version a user installed.
       its pages. Before the tag exists TC-2 pins the previous release ("falling
       back to the latest release"): this step tests the app, not the new ZIPs
    c. After each half, this prints nothing, and `adb logcat -d -b crash` holds
-      no com.vscodroid entry:
-      uid=$(adb shell pm list packages -U com.vscodroid |
-        sed -n 's/^package:com\.vscodroid uid://p')
+      no com.geditorx.app entry:
+      uid=$(adb shell pm list packages -U com.geditorx.app |
+        sed -n 's/^package:com\.geditorx\.app uid://p')
       adb logcat -d --uid="$uid" | grep -v FeatureFlagsImplExport | grep -E \
         -e 'FATAL EXCEPTION|Launch-time refresh of' \
         -e 'NoClassDefFoundError|ClassNotFoundException|AbstractMethodError' \

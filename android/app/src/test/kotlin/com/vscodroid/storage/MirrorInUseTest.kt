@@ -31,7 +31,7 @@ class MirrorInUseTest {
     private val hash = "abc123def456"
     private val other = "999888777666"
     private val sep = File.separator
-    private val root = "/data/user/0/com.vscodroid/files/saf-mirrors"
+    private val root = "/data/user/0/com.geditorx.app/files/saf-mirrors"
 
     private fun refusal(
         watched: String? = null,
@@ -118,7 +118,7 @@ class MirrorInUseTest {
     fun `an ordinary project folder names no mirror`() {
         assertNull(
             SafStorageManager.mirrorNameFor(
-                "/data/user/0/com.vscodroid/files/home/projects/app", root
+                "/data/user/0/com.geditorx.app/files/home/projects/app", root
             ),
         )
         assertNull(SafStorageManager.mirrorNameFor(null, root))

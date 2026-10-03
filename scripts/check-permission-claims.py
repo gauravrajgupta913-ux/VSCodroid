@@ -42,8 +42,8 @@ about the pairing written in the same name. This one asks the artefact instead.
 
 Names are compared on their last dot-separated segment. That is not laziness
 about `android.permission.` prefixes: the app-defined receiver permission is
-named after the applicationId, so it is `com.vscodroid.DYNAMIC_RECEIVER_...` in
-a release build and `com.vscodroid.debug.DYNAMIC_RECEIVER_...` in a debug one,
+named after the applicationId, so it is `com.geditorx.app.DYNAMIC_RECEIVER_...` in
+a release build and `com.geditorx.app.debug.DYNAMIC_RECEIVER_...` in a debug one,
 and a comparison on the full name would answer differently for the same
 document depending on which variant last built. The cost is that two permissions
 sharing a final segment would be conflated; nothing in this app or its
@@ -165,7 +165,7 @@ _CONTROLS = (
 
 _POLICY_CONTROLS = (
     ("a backticked permission", "holds `INTERNET` and nothing else", {"INTERNET"}),
-    ("an applicationId-scoped one", "`com.vscodroid.DYNAMIC_RECEIVER_X`",
+    ("an applicationId-scoped one", "`com.geditorx.app.DYNAMIC_RECEIVER_X`",
      {"DYNAMIC_RECEIVER_X"}),
     ("a backticked lowercase token", "installed from `com.android.vending`", set()),
     ("a permission named only in prose", "requires the INTERNET permission", set()),

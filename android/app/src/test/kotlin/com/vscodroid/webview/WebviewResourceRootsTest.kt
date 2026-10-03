@@ -20,7 +20,7 @@ import java.io.File
 import java.nio.file.Files
 
 /** The app-private directory every path below is expressed against. */
-private const val FILES = "/data/data/com.vscodroid/files"
+private const val FILES = "/data/data/com.geditorx.app/files"
 
 /**
  * Keeps both sides of every comparison in the form the resolver works in.

@@ -42,8 +42,8 @@ import java.io.File as JavaFile
 class WorkspaceUrlRoundTripTest {
 
     private val token = "0123456789abcdef"
-    private val workspace = "/data/user/0/com.vscodroid/files/saf-mirrors/92f67f007ab2/proj.code-workspace"
-    private val folder = "/data/user/0/com.vscodroid/files/projects/site"
+    private val workspace = "/data/user/0/com.geditorx.app/files/saf-mirrors/92f67f007ab2/proj.code-workspace"
+    private val folder = "/data/user/0/com.geditorx.app/files/projects/site"
 
     @BeforeEach
     fun setUp() {
@@ -165,7 +165,7 @@ class WorkspaceUrlRoundTripTest {
     @Test
     fun `the directory in force for a workspace is the one holding it`() {
         assertEquals(
-            "/data/user/0/com.vscodroid/files/saf-mirrors/92f67f007ab2",
+            "/data/user/0/com.geditorx.app/files/saf-mirrors/92f67f007ab2",
             workspaceDirectoryInForce(workspace, isFile = { true }),
             "the resource interceptor publishes this as a root, and a root that is a " +
                 "single file matches only itself: every resource in the workspace would " +
@@ -527,7 +527,7 @@ class WorkspaceUrlRoundTripTest {
         )
     }
 
-    private val mirror = "/data/user/0/com.vscodroid/files/saf-mirrors/92f67f007ab2"
+    private val mirror = "/data/user/0/com.geditorx.app/files/saf-mirrors/92f67f007ab2"
 
     /**
      * The picker grants a directory, because `ACTION_OPEN_DOCUMENT_TREE` returns

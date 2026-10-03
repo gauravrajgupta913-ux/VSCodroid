@@ -34,7 +34,7 @@ import java.io.File
  */
 class WorkspaceMemoryTest {
 
-    private val mirrorsRoot = "/data/user/0/com.vscodroid/files/saf-mirrors"
+    private val mirrorsRoot = "/data/user/0/com.geditorx.app/files/saf-mirrors"
 
     @Test
     fun `nothing remembered reopens nothing`() {
@@ -86,7 +86,7 @@ class WorkspaceMemoryTest {
     fun `a folder that is gone is not reopened`() {
         assertNull(
             rememberedFolderToReopen(
-                "/data/user/0/com.vscodroid/files/projects/site",
+                "/data/user/0/com.geditorx.app/files/projects/site",
                 mirrorsRoot,
                 exists = { false },
                 mirrorIsGranted = { true },
@@ -98,7 +98,7 @@ class WorkspaceMemoryTest {
 
     @Test
     fun `an ordinary project folder needs no grant`() {
-        val path = "/data/user/0/com.vscodroid/files/projects/site"
+        val path = "/data/user/0/com.geditorx.app/files/projects/site"
 
         assertEquals(
             path,
