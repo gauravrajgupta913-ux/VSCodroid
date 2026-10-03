@@ -3364,6 +3364,9 @@ class MainActivity : AppCompatActivity() {
         injectWindowOpenOverride()
         // Answers a paste out of Android's clipboard, which the WebView will not
         injectClipboardReadFallback()
+        // Adds native text selection to Copilot replies and Android clipboard
+        // actions to the chat composer only; Monaco's code editor is excluded.
+        injectCopilotChatTextSelection()
         // Keeps a downloaded blob readable long enough to be saved, and names it
         injectDownloadCapture()
         // Open in Browser, SSH keys and About are contributed by the bundled bridge
@@ -5004,6 +5007,271 @@ class MainActivity : AppCompatActivity() {
                     return;
                 }
                 window.__vscodroidClipboardPatched = true;
+            })();
+            """.trimIndent(),
+            null
+        )
+    }
+
+    /**
+     * Enables WebView's native long-press selection for chat replies and supplies
+     * a small Android-backed action menu for the Copilot chat composer.
+     *
+     * The server tree is downloaded and immutable in the app build, so this is
+     * installed at runtime after every workbench navigation. It deliberately
+     * scopes selection and menu behavior to chat view DOM, never to Monaco's code
+     * editor. The composer can be a textarea/contenteditable or a Monaco
+     * EditContext host; the latter is edited through its public EditContext API.
+     * Clipboard access uses the existing session-token-protected AndroidBridge.
+     */
+    private fun injectCopilotChatTextSelection() {
+        webView?.evaluateJavascript(
+            """
+            (function() {
+                if (window.__vscodroidChatTextSelection) return;
+                window.__vscodroidChatTextSelection = true;
+
+                var CHAT_ROOT = '.interactive-session, .chat-view-pane, .chat-view, .chat-widget';
+                var COMPOSER = '.chat-input-container, .chat-input, [class*="chat-input"], [class*="chatInput"]';
+                var EDITABLE = 'textarea, input:not([type]), input[type="text"], [contenteditable="true"], [role="textbox"], .native-edit-context';
+                var MENU_ID = 'vscodroid-chat-text-menu';
+                var style = document.createElement('style');
+                style.id = 'vscodroid-chat-text-selection-css';
+                style.textContent = [
+                    '.vscodroid-chat-selectable, .vscodroid-chat-selectable * {' +
+                        'user-select: text !important; -webkit-user-select: text !important;' +
+                        ' -webkit-touch-callout: default !important; }',
+                    '#' + MENU_ID + ' { position: fixed; z-index: 2147483647; display: flex;' +
+                        ' gap: 4px; padding: 5px; border-radius: 8px; background: #292929;' +
+                        ' color: white; box-shadow: 0 3px 12px #0008; font: 14px sans-serif;' +
+                        ' touch-action: manipulation; }',
+                    '#' + MENU_ID + ' button { border: 0; border-radius: 5px; padding: 9px 11px;' +
+                        ' color: inherit; background: transparent; font: inherit; white-space: nowrap;' +
+                        ' }',
+                    '#' + MENU_ID + ' button:active { background: #ffffff30; }'
+                ].join('');
+                (document.head || document.documentElement).appendChild(style);
+
+                var menu = null;
+                var composerPressTimer = null;
+                var composerPressPoint = null;
+
+                function chatRootFor(node) {
+                    return node && node.closest ? node.closest(CHAT_ROOT) : null;
+                }
+                function composerFor(node) {
+                    var root = chatRootFor(node);
+                    if (!root || !node || !node.closest) return null;
+                    var container = node.closest(COMPOSER);
+                    if (!container || !root.contains(container)) return null;
+                    // When the pointer lands on Monaco's rendered surface rather
+                    // than its hidden EditContext input, resolve that input later.
+                    if (container.matches(EDITABLE)) return container;
+                    return container.querySelector(EDITABLE + ', .monaco-editor .native-edit-context, .monaco-editor textarea.inputarea') || container;
+                }
+                function isChatResponse(node) {
+                    var root = chatRootFor(node);
+                    if (!root || !node || !node.closest) return false;
+                    if (node.closest(COMPOSER)) return false;
+                    if (node.closest('button, input, textarea, [contenteditable="true"], [role="textbox"]')) return false;
+                    return !!node.closest('.interactive-item-container, .chat-list, .rendered-markdown, [class*="message"], [class*="response"], [data-message-role]');
+                }
+                function markChatText() {
+                    document.querySelectorAll(CHAT_ROOT).forEach(function(root) {
+                        root.querySelectorAll('.interactive-item-container, .chat-list, .rendered-markdown, [class*="message"], [class*="response"], [data-message-role]')
+                            .forEach(function(el) {
+                                if (!el.closest(COMPOSER)) el.classList.add('vscodroid-chat-selectable');
+                            });
+                    });
+                }
+                function currentToken() {
+                    return (window.__vscodroid || {}).authToken || '';
+                }
+                function editableTextTarget(el) {
+                    if (!el) return null;
+                    if (el.editContext && typeof el.editContext.updateText === 'function') return { kind: 'editContext', el: el, context: el.editContext };
+                    if (el.matches && el.matches('textarea, input')) return { kind: 'input', el: el };
+                    if (el.isContentEditable || (el.matches && el.matches('[contenteditable="true"]'))) return { kind: 'contenteditable', el: el };
+                    var found = el.querySelector && el.querySelector('.native-edit-context, textarea.inputarea, textarea, [contenteditable="true"]');
+                    if (found) return editableTextTarget(found);
+                    return null;
+                }
+                function selection(target) {
+                    if (!target) return '';
+                    if (target.kind === 'editContext') {
+                        var ec = target.context;
+                        return ec.text.slice(Math.min(ec.selectionStart, ec.selectionEnd), Math.max(ec.selectionStart, ec.selectionEnd));
+                    }
+                    if (target.kind === 'input') {
+                        var el = target.el;
+                        return el.value.slice(el.selectionStart || 0, el.selectionEnd || 0);
+                    }
+                    var sel = window.getSelection();
+                    return sel && sel.rangeCount && target.el.contains(sel.anchorNode) ? sel.toString() : '';
+                }
+                function selectAll(target) {
+                    if (!target) return false;
+                    target.el.focus();
+                    if (target.kind === 'editContext') {
+                        target.context.updateSelection(0, target.context.text.length);
+                    } else if (target.kind === 'input') {
+                        target.el.select();
+                    } else {
+                        var range = document.createRange();
+                        range.selectNodeContents(target.el);
+                        var sel = window.getSelection();
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+                    return true;
+                }
+                function pasteInto(target, text) {
+                    if (!target || text === null || text === undefined) return false;
+                    target.el.focus();
+                    if (target.kind === 'editContext') {
+                        var ec = target.context;
+                        var start = Math.min(ec.selectionStart, ec.selectionEnd);
+                        var end = Math.max(ec.selectionStart, ec.selectionEnd);
+                        ec.updateText(start, end, text);
+                        ec.updateSelection(start + text.length, start + text.length);
+                        return true;
+                    }
+                    if (target.kind === 'input') {
+                        var input = target.el;
+                        var start = input.selectionStart === null ? input.value.length : input.selectionStart;
+                        var end = input.selectionEnd === null ? start : input.selectionEnd;
+                        if (typeof input.setRangeText === 'function') input.setRangeText(text, start, end, 'end');
+                        else input.value = input.value.slice(0, start) + text + input.value.slice(end);
+                        input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste', data: text }));
+                        return true;
+                    }
+                    var sel = window.getSelection();
+                    if (sel && sel.rangeCount && target.el.contains(sel.anchorNode)) {
+                        var range = sel.getRangeAt(0);
+                        range.deleteContents();
+                        var node = document.createTextNode(text);
+                        range.insertNode(node);
+                        range.setStartAfter(node);
+                        range.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    } else {
+                        target.el.appendChild(document.createTextNode(text));
+                    }
+                    target.el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste', data: text }));
+                    return true;
+                }
+                function dismissMenu() {
+                    if (menu && menu.parentNode) menu.parentNode.removeChild(menu);
+                    menu = null;
+                }
+                function showMenu(x, y, actions) {
+                    dismissMenu();
+                    menu = document.createElement('div');
+                    menu.id = MENU_ID;
+                    menu.setAttribute('role', 'menu');
+                    actions.forEach(function(action) {
+                        var button = document.createElement('button');
+                        button.type = 'button';
+                        button.textContent = action.label;
+                        button.setAttribute('role', 'menuitem');
+                        button.addEventListener('pointerdown', function(e) { e.preventDefault(); });
+                        button.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            action.run();
+                            dismissMenu();
+                        });
+                        menu.appendChild(button);
+                    });
+                    (document.body || document.documentElement).appendChild(menu);
+                    var left = Math.max(8, Math.min(x, window.innerWidth - menu.offsetWidth - 8));
+                    var top = Math.max(8, Math.min(y, window.innerHeight - menu.offsetHeight - 8));
+                    menu.style.left = left + 'px';
+                    menu.style.top = top + 'px';
+                }
+                function showComposerMenu(x, y, target) {
+                    showMenu(x, y, [
+                        { label: 'Select All', run: function() { selectAll(target); } },
+                        { label: 'Copy', run: function() {
+                            var value = selection(target);
+                            var token = currentToken();
+                            if (value && token && typeof AndroidBridge !== 'undefined') AndroidBridge.copyToClipboard(token, value);
+                        } },
+                        { label: 'Paste', run: function() {
+                            var token = currentToken();
+                            if (!token || typeof AndroidBridge === 'undefined') return;
+                            pasteInto(target, AndroidBridge.readFromClipboard(token));
+                        } }
+                    ]);
+                }
+                function clearComposerPress() {
+                    if (composerPressTimer !== null) window.clearTimeout(composerPressTimer);
+                    composerPressTimer = null;
+                    composerPressPoint = null;
+                }
+
+                document.addEventListener('contextmenu', function(e) {
+                    var composer = composerFor(e.target);
+                    if (composer) {
+                        var target = editableTextTarget(composer);
+                        if (!target) return;
+                        clearComposerPress();
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showComposerMenu(e.clientX, e.clientY, target);
+                        return;
+                    }
+                    if (!isChatResponse(e.target)) return;
+                    // Keep the browser's DOM selection (and Android drag handles)
+                    // intact; replace only its action menu with an Android-backed Copy.
+                    var selected = window.getSelection();
+                    if (!selected || !selected.toString()) return;
+                    e.preventDefault();
+                    showMenu(e.clientX, e.clientY, [
+                        { label: 'Copy', run: function() {
+                            var value = window.getSelection().toString();
+                            var token = currentToken();
+                            if (value && token && typeof AndroidBridge !== 'undefined') AndroidBridge.copyToClipboard(token, value);
+                        } },
+                        { label: 'Select All', run: function() {
+                            var response = e.target.closest('.interactive-item-container, .chat-list, .rendered-markdown, [class*="message"], [class*="response"], [data-message-role]');
+                            if (!response) return;
+                            var range = document.createRange();
+                            range.selectNodeContents(response);
+                            var sel = window.getSelection();
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        } }
+                    ]);
+                }, true);
+                document.addEventListener('pointerdown', function(e) {
+                    var composer = composerFor(e.target);
+                    var target = composer && editableTextTarget(composer);
+                    if (!target || (e.pointerType !== 'touch' && e.pointerType !== 'pen')) return;
+                    clearComposerPress();
+                    composerPressPoint = { x: e.clientX, y: e.clientY };
+                    composerPressTimer = window.setTimeout(function() {
+                        composerPressTimer = null;
+                        showComposerMenu(composerPressPoint.x, composerPressPoint.y, target);
+                    }, 550);
+                }, true);
+                document.addEventListener('pointermove', function(e) {
+                    if (!composerPressPoint) return;
+                    if (Math.abs(e.clientX - composerPressPoint.x) > 12 || Math.abs(e.clientY - composerPressPoint.y) > 12) {
+                        clearComposerPress();
+                    }
+                }, true);
+                document.addEventListener('pointerup', clearComposerPress, true);
+                document.addEventListener('pointercancel', clearComposerPress, true);
+                document.addEventListener('pointerdown', function(e) {
+                    if (menu && !menu.contains(e.target)) dismissMenu();
+                }, true);
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') dismissMenu();
+                }, true);
+                markChatText();
+                new MutationObserver(markChatText).observe(document.documentElement, { childList: true, subtree: true });
             })();
             """.trimIndent(),
             null
